@@ -2,14 +2,15 @@ import styles from './listing.module.css'
 import {StyledDiv,ListLi,StyledTitle,DetailsTag,DetailsSpan,AddToCartButton,SeeMoreButton} from '../styled/styled-components'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-const Listing = ({data,page}) => {
+const Listing = ({data,page,visibleCount,lastItemRef}) => {
     return(
         <ul className={page === 'details' ? styles['product'] : styles['products-list']}>
-            {data.map((element,index) => {
+            {data.slice(0, visibleCount).map((element,index) => {
                 const {id,category,brand,stock,title,images,price,rating,minimumOrderQuantity,description,returnPolicy,dimensions} = element;
-                console.log(id)
+                const isLastItem = index === visibleCount - 1;
+             
                 return(
-                    <ListLi key={id} className={`${styles['prod']} `}>
+                    <ListLi key={id} className={`${styles['prod']}`} ref={isLastItem ? lastItemRef : null}>
                         <img src={images[0]} height = {page === 'details' ? 220 : 140} style={{margin:'10px 0'}}/>
                         <div className={styles['info-div']}>
                         <StyledTitle>{title}</StyledTitle>
