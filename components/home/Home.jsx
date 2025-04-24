@@ -1,5 +1,5 @@
 'use client';
-import { useEffect,useState } from "react"
+import { useEffect,useState,useCallback,useRef } from "react"
 // import {getData} from '../../api/axios'
 import {LoadingDiv} from '../../components/styled/styled-components'
 import Search from "./Search"
@@ -11,31 +11,19 @@ const Home = () => {
     const [dataArr,setDataArr] = useState([])
     const [displayArr,setdisplayArr] = useState([])
     const [search,setSearch] = useState('')
-
-
-
-
-    useEffect(() => {
-        var listItems
-        setTimeout(() => {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                  if (entry.isIntersecting) {
-                    entry.target.classList.add(styles['lazy-load-visible'])
-                    observer.unobserve(entry.target);
-                  }
-                });
-              }, {
-                rootMargin: '0px 0px 100px 0px',
-                threshold: 0.1
-              });
-
-             listItems = document.querySelectorAll(`.${styles['lazy-load']}`);
-             listItems.forEach(item => observer.observe(item))
-          }, 1000);
-      }, []);
-
-
+    const [visibleCount, setVisibleCount] = useState(1);
+    const observer = useRef();
+    const lastItemRef = useCallback(node => {
+      if (observer.current) observer.current.disconnect();
+    
+      observer.current = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting) {
+          setVisibleCount(prev => prev + 1); 
+        }
+      });
+    
+      if (node) observer.current.observe(node);
+    }, []);
 
     const fetchData = async () => {
         try{ 
@@ -83,7 +71,7 @@ const Home = () => {
     return(
         <>
         <Search search={search} setSearch={setSearch}/>
-        <Listing data={displayArr}/>
+        <Listing data={displayArr} visibleCount={visibleCount} lastItemRef={lastItemRef}/>
         </>
     )
 }
