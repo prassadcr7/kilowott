@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Listing from "../../components/listing/Listing"
 import {useRouter} from 'next/router'
 import { LoadingDiv } from "../../components/styled/styled-components";
+import {getSingleProduct} from '../../api/productsApi'
 const SingleProduct = () => {
     const router = useRouter();
     const {id} = router.query;
@@ -11,15 +12,18 @@ const SingleProduct = () => {
 
     const fetchData = async () => {
         try{ 
-            const response = await fetch(`https://dummyjson.com/products/${id}`);
-            const data = await response.json();
-            if(data){
-                setDataArr([data])
+            const response = await getSingleProduct(id);
+            if(response.success){
+                if(response.data){
+                    setDataArr([response.data])
+                    setLoading(false)
+                }
+            }else{
                 setLoading(false)
+                setError(response.message)
             }
         }catch(error){
             setError(error)
-            console.log(error)
         }
     }
     useEffect(()=> {

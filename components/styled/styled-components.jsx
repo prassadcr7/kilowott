@@ -72,3 +72,13 @@ export const LoadingDiv = styled.div`
     text-align:center;
     margin-top:250px;
 `;
+
+export const ErrorDiv = styled.div`
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    gap: 10px;
+    height: 100vh;
+`;
